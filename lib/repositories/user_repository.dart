@@ -10,6 +10,33 @@ class UserRepository {
 
   UserRepository() {
     restClient.httpClient.baseUrl = 'http://192.168.0.108:8080';
+    // Responsável em fazer tentativas de conexão.
+    restClient.httpClient.maxAuthRetries = 3;
+
+    restClient.httpClient.addAuthenticator<Object?>((request) async {
+      log('addAuthenticator Chamado!!!');
+      const email = 'victorapc@gmail.com.br';
+      const password = '123456';
+
+      final result = await restClient.post('/auth', {
+        'email': email,
+        'password': password,
+      });
+
+      if (!result.hasError) {
+        final acessToken = result.body['access_token'];
+        final type = result.body['type'];
+        if (acessToken != null) {
+          request.headers['authorization'] = '$type $acessToken';
+        }
+      } else {
+        log('Erro ao fazer login.');
+        Get.snackbar('Erro', 'Erro ao fazer login.');
+      }
+
+      return request;
+    });
+
     restClient.httpClient.addRequestModifier<Object?>((request) {
       log(request.url.toString());
       request.headers['start-time'] = DateTime.now().toIso8601String();
