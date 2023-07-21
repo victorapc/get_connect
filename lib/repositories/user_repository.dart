@@ -12,7 +12,9 @@ class UserRepository {
           'Erro ao buscar usuários: (${result.status} - ${result.statusText})');
     }
 
-    return result.body.map((user) => UserModel.fromMap(user)).toList();
+    return result.body
+        .map<UserModel>((user) => UserModel.fromMap(user))
+        .toList();
   }
 
   Future<void> saveUser(UserModel user) async {
@@ -37,7 +39,7 @@ class UserRepository {
 
   Future<void> updateUser(UserModel user) async {
     final result = await restClient.put(
-        'http://192.168.0.108:8080/users/${user.id}', user);
+        'http://192.168.0.108:8080/users/${user.id}', user.toMap());
 
     if (result.hasError) {
       throw Exception(

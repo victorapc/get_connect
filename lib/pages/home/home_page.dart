@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:get_connect_example/core/widget/elevated_button_custom.dart';
+import 'package:get/get.dart';
+import 'package:get_connect_example/pages/home/home_controller.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends GetView<HomeController> {
   const HomePage({super.key});
 
   @override
@@ -10,12 +11,39 @@ class HomePage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Home Page'),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ElevatedButtonCustom(text: 'Tese', onPressed: () {}),
-          ],
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          controller.register();
+        },
+        child: const Icon(Icons.add),
+      ),
+      body: controller.obx(
+        (state) {
+          if (state == null) {
+            return const Center(
+              child: Text('Nenhum usuário cadastrado.'),
+            );
+          }
+
+          return ListView.builder(
+            itemCount: state.length,
+            itemBuilder: (context, index) {
+              final user = state[index];
+
+              return ListTile(
+                onTap: () => controller.updateUser(user),
+                onLongPress: () => controller.deleteUser(user),
+                title: Text(user.name),
+                subtitle: Text(user.email),
+              );
+            },
+          );
+        },
+        onEmpty: const Center(
+          child: Text('Nenhum usuário cadastrado.'),
+        ),
+        onError: (error) => const Center(
+          child: Text('Erro ao buscar usuários.'),
         ),
       ),
     );
