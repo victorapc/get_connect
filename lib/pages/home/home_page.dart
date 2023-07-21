@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:get_connect_example/pages/home/home_controller.dart';
 
 class HomePage extends GetView<HomeController> {
+  //final controller = Get.find<HomeController>();
+
   const HomePage({super.key});
 
   @override

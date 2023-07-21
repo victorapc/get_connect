@@ -2,10 +2,16 @@ import 'package:get/get.dart';
 import 'package:get_connect_example/models/user_model.dart';
 
 class UserRepository {
-  final restClient = GetConnect();
+  final restClient = GetConnect(
+    timeout: const Duration(seconds: 10),
+  );
+
+  UserRepository() {
+    restClient.httpClient.baseUrl = 'http://192.168.0.108:8080';
+  }
 
   Future<List<UserModel>> findAll() async {
-    final result = await restClient.get('http://192.168.0.108:8080/users');
+    final result = await restClient.get('/users');
 
     if (result.hasError) {
       throw Exception(
@@ -18,8 +24,7 @@ class UserRepository {
   }
 
   Future<void> saveUser(UserModel user) async {
-    final result =
-        await restClient.post('http://192.168.0.108:8080/users', user.toMap());
+    final result = await restClient.post('/users', user.toMap());
 
     if (result.hasError) {
       throw Exception(
@@ -28,8 +33,7 @@ class UserRepository {
   }
 
   Future<void> deleteUser(UserModel user) async {
-    final result =
-        await restClient.delete('http://192.168.0.108:8080/users/${user.id}');
+    final result = await restClient.delete('/users/${user.id}');
 
     if (result.hasError) {
       throw Exception(
@@ -38,8 +42,7 @@ class UserRepository {
   }
 
   Future<void> updateUser(UserModel user) async {
-    final result = await restClient.put(
-        'http://192.168.0.108:8080/users/${user.id}', user.toMap());
+    final result = await restClient.put('/users/${user.id}', user.toMap());
 
     if (result.hasError) {
       throw Exception(
